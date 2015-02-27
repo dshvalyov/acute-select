@@ -1,3 +1,174 @@
+﻿angular.module("acute.core.directives", [])
+// Directive to set focus to an element when a specified expression is true
+.directive('acuteFocus', function ($timeout, $parse) {
+    return {
+        restrict: "A",
+        link: function (scope, element, attributes) {
+            var setFocus = $parse(attributes.acuteFocus);
+            scope.$watch(setFocus, function (value) {
+                if (value === true) {
+                    $timeout(function () {
+                        element[0].focus();
+                    });
+                }
+            });
+            // Set the "setFocus" attribute value to 'false' on blur event
+            // using the "assign" method on the function that $parse returns
+            element.bind('blur', function () {
+                scope.$apply(setFocus.assign(scope, false));
+            });
+        }
+    };
+})
+
+// Directive for a scroll container. Set acute-scroll-top to an expression and the div will scroll when it changes
+.directive('acScrollTo', function () {
+    return {
+        restrict: "A",
+        scope: false,
+        controller: function ($scope, $element, $attrs) {
+            var expression = $attrs.acScrollTo;
+            $scope.$watch(expression, function () {
+                var scrollTop = $scope.$eval(expression);
+                angular.element($element)[0].scrollTop = scrollTop;
+            });
+        }
+    };
+})
+
+// Call a function when the element is scrolled
+// E.g. ac-on-scroll="listScrolled()" 
+// N.B. take care not to use the result to directly update an acScrollTo expression
+// as this will result in an infinite recursion!
+.directive('acOnScroll', function () {
+    return {
+        restrict: "A",
+        link: function (scope, element, attrs) {
+            var callbackName = attrs.acOnScroll;
+            if (callbackName.indexOf("()") === callbackName.length - 2) {
+                callbackName = callbackName.substr(0, callbackName.length - 2);
+            }
+            var callback = scope[callbackName];
+            if (typeof callback === "function") {
+                element.bind("scroll", function () {
+                    callback(element[0].scrollTop);
+                });
+            }
+        }
+    };
+});
+﻿// Common services
+angular.module("acute.core.services", [])
+
+// safeApply service, courtesy Alex Vanston and Andrew Reutter
+.factory('safeApply', [function ($rootScope) {
+    return function ($scope, fn) {
+        var phase = $scope.$root.$$phase;
+        if (phase == '$apply' || phase == '$digest') {
+            if (fn) {
+                $scope.$eval(fn);
+            }
+        } else {
+            if (fn) {
+                $scope.$apply(fn);
+            } else {
+                $scope.$apply();
+            }
+        }
+    }
+}])
+
+.factory('keyCode', function () {
+    return {
+        'backspace': 8,
+        'tab': 9,
+        'enter': 13,
+        'shift': 16,
+        'ctrl': 17,
+        'alt': 18,
+        'pause': 19,
+        'capsLock': 20,
+        'esc': 27,
+        'escape': 27,
+        'pageUp': 33,
+        'pageDown': 34,
+        'end': 35,
+        'home': 36,
+        'leftArrow': 37,
+        'upArrow': 38,
+        'rightArrow': 39,
+        'downArrow': 40,
+        'insert': 45,
+        'del': 46,  // Note cannot use "delete" as it breaks IE8 because it's a reserved word
+        '0': 48,
+        '1': 49,
+        '2': 50,
+        '3': 51,
+        '4': 52,
+        '5': 53,
+        '6': 54,
+        '7': 55,
+        '8': 56,
+        '9': 57,
+        'a': 65,
+        'b': 66,
+        'c': 67,
+        'd': 68,
+        'e': 69,
+        'f': 70,
+        'g': 71,
+        'h': 72,
+        'i': 73,
+        'j': 74,
+        'k': 75,
+        'l': 76,
+        'm': 77,
+        'n': 78,
+        'o': 79,
+        'p': 80,
+        'q': 81,
+        'r': 82,
+        's': 83,
+        't': 84,
+        'u': 85,
+        'v': 86,
+        'w': 87,
+        'x': 88,
+        'y': 89,
+        'z': 90,
+        '0numpad': 96,
+        '1numpad': 97,
+        '2numpad': 98,
+        '3numpad': 99,
+        '4numpad': 100,
+        '5numpad': 101,
+        '6numpad': 102,
+        '7numpad': 103,
+        '8numpad': 104,
+        '9numpad': 105,
+        'multiply': 106,
+        'plus': 107,
+        'minus': 109,
+        'dot': 110,
+        'slash1': 111,
+        'F1': 112,
+        'F2': 113,
+        'F3': 114,
+        'F4': 115,
+        'F5': 116,
+        'F6': 117,
+        'F7': 118,
+        'F8': 119,
+        'F9': 120,
+        'F10': 121,
+        'F11': 122,
+        'F12': 123,
+        'equals': 187,
+        'comma': 188,
+        'slash': 191,
+        'backslash': 220
+    };
+});
 ﻿/// <reference path="../lib/angular.1.2.26.js" />
 
 // Directive that creates a searchable dropdown list.
@@ -10,7 +181,7 @@
 
 // Note:- ac-options works like ng-options, but does not support option groups
 
-angular.module("acute.select", [])
+angular.module("acute.select", ['acute.core.services','acute.core.directives'])
 .directive("acSelect", function($parse, acuteSelectService) {
     var defaultSettings = acuteSelectService.getSettings();
     return {
@@ -1033,3 +1204,51 @@ angular.module("acute.select", [])
         }
     }
 });
+angular.module("acute.select").run(['$templateCache', function(a) { a.put('/acute.select/templates.js', '<div class="ac-select-wrapper" ng-keydown="keyHandler($event)" tabindex="999" ac-focus="wrapperFocus" ng-focus="comboFocus = true">\n' +
+ '    <div ng-class="{\'ac-select-main\':true, \'ac-select-main-closed\':!popupVisible, \'ac-select-main-open\':popupVisible}" ng-click="mainClick($event)" ng-style="{\'minWidth\': settings.minWidth }">\n' +
+ '        <table class="ac-select-table" ng-click="togglePopup($event)">\n' +
+ '            <tr>\n' +
+ '                <td class="ac-select-display">\n' +
+ '                    <div class="ac-select-text-wrapper" ng-show="settings.comboMode">\n' +
+ '                        <input type="text" class="ac-select-text" ng-model="comboText" ac-focus="comboFocus" ac-select-on-focus ng-change="comboTextChange()" placeholder="{{settings.placeholderText}}" watermark="{{settings.placeholderText}}">\n' +
+ '                    </div>\n' +
+ '                    <span ng-hide="settings.comboMode">{{confirmedItem.text}}</span>\n' +
+ '                </td>\n' +
+ '                <td class="ac-select-image"></td>\n' +
+ '            </tr>\n' +
+ '            <!--Row to get the control width right, using the original select or the longest item text. Hidden at runtime.-->\n' +
+ '            <tr class="ac-select-widener">\n' +
+ '                <td class="ac-select-longest">&nbsp;{{longestText}}</td>\n' +
+ '                <td></td>\n' +
+ '            </tr>\n' +
+ '        </table>\n' +
+ '    </div>\n' +
+ '    <div class="ac-select-popup" ng-show="popupVisible" ng-style="{\'minWidth\': settings.minWidth }">\n' +
+ '        <div class="ac-select-search-wrapper" ng-hide="settings.comboMode || !settings.showSearchBox">\n' +
+ '            <table>\n' +
+ '                <tr>\n' +
+ '                    <td>\n' +
+ '                        <input type="text" class="ac-select-search" ng-model="searchText" placeholder="search" ac-focus="searchBoxFocus" ac-select-on-focus ng-change="findData()" ng-keydown="keyHandler($event)">\n' +
+ '                    </td>\n' +
+ '                    <td class="ac-select-add" ng-class="{ \'ac-select-disabled\': matchFound }" title="Add" ng-show="settings.allowCustomText" ng-click="addButtonClick()">\n' +
+ '                        <div>+</div>\n' +
+ '                    </td>\n' +
+ '                </tr>\n' +
+ '            </table>\n' +
+ '        </div>\n' +
+ '        <div class="ac-select-no-items" ng-show="noItemsFound">{{settings.noItemsText}}</div>\n' +
+ '        <div class="ac-select-list" ng-style="{ &quot;height&quot;: (listHeight + 6) + &quot;px&quot; }" ac-scroll-to="scrollTo" ac-on-scroll="listScrolled()">\n' +
+ '            <ul>\n' +
+ '                <li id="{{item.id}}" ng-repeat="item in items | filter: search" ng-class="getItemClass($index)" ng-click="itemClick($index)" ng-style="{ height: settings.itemHeight + \'px\', \'line-height\': settings.itemHeight + \'px\' }">\n' +
+ '                    {{item.text}}\n' +
+ '                </li>\n' +
+ '            </ul>\n' +
+ '            <div class="ac-select-loading" ng-show="loading" ng-style="{ height: settings.itemHeight + \'px\'}">Loading...</div>\n' +
+ '        </div>\n' +
+ '        <div class="ac-select-load-more" ng-show="allDataLoaded===false">\n' +
+ '            {{items.length}} items<!-- of {{matchingItemTotal}}--> \n' +
+ '            <span ng-click="loadMore()">{{loadMessage}}</span>\n' +
+ '        </div>\n' +
+ '    </div>\n' +
+ '</div>');
+	 }]);
