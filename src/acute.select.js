@@ -10,7 +10,7 @@
 
 // Note:- ac-options works like ng-options, but does not support option groups
 
-angular.module("acute.select", ['acute.core.services','acute.core.directives'])
+angular.module("acute.select", [])
 .directive("acSelect", function($parse, acuteSelectService) {
     var defaultSettings = acuteSelectService.getSettings();
     return {
@@ -25,7 +25,7 @@ angular.module("acute.select", ['acute.core.services','acute.core.directives'])
             "acFocusWhen": "="
         },
         replace: true,
-        templateUrl: defaultSettings.templatePath + "acute.select.html",
+        templateUrl: defaultSettings.templatePath + "template.html",
         link: function(scope, element, attrs) {
             scope.initialise();
         },

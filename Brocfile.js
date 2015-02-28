@@ -19,13 +19,13 @@ sourceJs = pickFiles(source, {
 * Grab templates 
 */
 sourceTemplates = angularTemplates(source, {
-	srcDir: './acute.select/template',
+	srcDir: './template',
 	distDir: './',
 	minify: {
 		collapseWhiteSpace: true
 	},
-	strip: 'src/acute.select.template',
-	prepend: '/acute.select/templates.html',
+	strip: 'src/template/acute.select.html',
+	prepend: '/acute.select/template.html',
 	fileName: 'template.js',
 	moduleName: 'acute.select'
 });
