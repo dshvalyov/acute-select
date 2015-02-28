@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html id="ng-app" ng-app="acuteSelectTest">
+<head>
+    <title></title>
+    <!--[if lte IE 8]>
+      <script type="text/javascript" src="/Scripts/json2.js"></script>
+        document.createElement('ac-select');
+      </script>
+    <![endif]-->
+
+    <script src="../bower_components/angular/angular.min.js"></script>
+    <!--<script type="text/javascript" src="../lib/angular.1.2.26.js"></script>-->
+    <script type="text/javascript" src="../dist/acute-select.js"></script>
+    <link href="../dist/acute-select.css" rel="stylesheet" />
+    <script type="text/javascript" src="TestAcuteSelect.js"></script>
+    <style>
+        body {
+            padding: 10px;
+        }
+        body, input, select {
+            font-family: Arial;
+            font-size: 12px;
+        }
+        .stateList {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div ng-controller="MainCtrl">
+
+        Combo mode - load when user types<br />
+        <select class="ac-select stateList" ac-model="state3" ac-options="s.name for s in getStates()" 
+            ac-settings="{ loadOnCreate: false, loadOnOpen: false, comboMode:true, noItemsText:'No matches found', minWidth: '300px'}"></select><br/>State selected: {{state3.name}}
+        <br /><br />
+
+    </div>
+    <div>
+        <select>
+            <option>Normal Select Box 1</option>
+            <option>red</option>
+            <option>black</option>
+            <option>yellow</option>
+            <option>orange</option>
+            <option>blue</option>
+            <option>brown</option>
+            <option>green</option>
+            <option>white</option>
+        </select>
+    </div>
+    <br />
+    <br />
+    <br />
+</body>
+</html>

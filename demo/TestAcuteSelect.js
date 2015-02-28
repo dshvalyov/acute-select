@@ -2,12 +2,7 @@
 
 angular.module("acuteSelectTest", ["acute.select"])
 
-.run(function (acuteSelectService) {
-
-    // Use the acute select service to set the template path for all instances
-    acuteSelectService.updateSetting("templatePath", "/acute.select/template");
-
-}).controller("MainCtrl", function ($scope, $http, $filter, $window, $timeout, safeApply) {
+.controller("MainCtrl", function ($scope, $http, $filter, $window, $timeout, safeApply) {
 
     $scope.textItems = ['Square', 'Circle', 'Triangle', 'Pentagon', 'Hexagon'];
     $scope.data = {
@@ -140,13 +135,13 @@ angular.module("acuteSelectTest", ["acute.select"])
 
     $scope.selectedServerItem = null;
 
-    // Web Service call
-    $http.post("TestWS.asmx/GetItemData", {})
-    .success(function(result) {
-        $scope.serverItems = result.d;
-    })
-    .error(function(a,b,c) {
-        alert("Web service call failed!");
-    });
+    // // Web Service call
+    // $http.post("TestWS.asmx/GetItemData", {})
+    // .success(function(result) {
+    //     $scope.serverItems = result.d;
+    // })
+    // .error(function(a,b,c) {
+    //     alert("Web service call failed!");
+    // });
 
 });
