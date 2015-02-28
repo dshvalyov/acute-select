@@ -755,8 +755,13 @@ angular.module("acute.select", [])
 
                 var itemCount = $scope.allItems.length;
 
-                // If search text is blank OR paging is enabled && current number of items is >= pageSize (or zero)
-                if ($scope.searchText === "" || ($scope.settings.pageSize && (itemCount >= $scope.settings.pageSize || itemCount === 0))) {
+                // If search text is blank 
+                // OR the search text is changed with less specificity
+                // OR paging is enabled && current number of items is >= pageSize (or zero)
+                if ($scope.searchText === "" 
+                    || ($scope.searchText.length < $scope.previousSearchText.length) 
+                    || ($scope.settings.pageSize && (itemCount >= $scope.settings.pageSize || itemCount === 0))
+                    ) {
                     // Data needs to be re-loaded.
                     $scope.allDataLoaded = false;
                 }

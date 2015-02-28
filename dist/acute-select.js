@@ -570,6 +570,12 @@ angular.module("acute.select", [])
                         clearClientFilter();
                     }
                 }
+
+                // Ensure that we always reload data after selecing an item.
+                // This may or may not be the best way to go, but it fixes 
+                // some issues where after initial load, we don't re-load when
+                // the user types.
+                // $scope.allDataLoaded = false;
             }
 
             function fireChangeEvent() {
@@ -756,7 +762,10 @@ angular.module("acute.select", [])
                 var itemCount = $scope.allItems.length;
 
                 // If search text is blank OR paging is enabled && current number of items is >= pageSize (or zero)
-                if ($scope.searchText === "" || ($scope.settings.pageSize && (itemCount >= $scope.settings.pageSize || itemCount === 0))) {
+                if ($scope.searchText === "" 
+                    || ($scope.searchText.length < $scope.previousSearchText.length) 
+                    || ($scope.settings.pageSize && (itemCount >= $scope.settings.pageSize || itemCount === 0))
+                    ) {
                     // Data needs to be re-loaded.
                     $scope.allDataLoaded = false;
                 }
