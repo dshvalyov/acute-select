@@ -9,7 +9,6 @@
 // Example:- <select class="ac-select" ac-model="colour" ac-options="c.name for c in colours"></select>
 
 // Note:- ac-options works like ng-options, but does not support option groups
-
 angular.module("acute.select", [])
 .directive("acSelect", function($parse, acuteSelectService) {
     var defaultSettings = acuteSelectService.getSettings();
@@ -570,12 +569,6 @@ angular.module("acute.select", [])
                         clearClientFilter();
                     }
                 }
-
-                // Ensure that we always reload data after selecing an item.
-                // This may or may not be the best way to go, but it fixes 
-                // some issues where after initial load, we don't re-load when
-                // the user types.
-                // $scope.allDataLoaded = false;
             }
 
             function fireChangeEvent() {
@@ -761,7 +754,9 @@ angular.module("acute.select", [])
 
                 var itemCount = $scope.allItems.length;
 
-                // If search text is blank OR paging is enabled && current number of items is >= pageSize (or zero)
+                // If search text is blank 
+                // OR the search text is changed with less specificity
+                // OR paging is enabled && current number of items is >= pageSize (or zero)
                 if ($scope.searchText === "" 
                     || ($scope.searchText.length < $scope.previousSearchText.length) 
                     || ($scope.settings.pageSize && (itemCount >= $scope.settings.pageSize || itemCount === 0))
