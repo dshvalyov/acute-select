@@ -25,8 +25,8 @@ sourceTemplates = angularTemplates(source, {
 		collapseWhiteSpace: true
 	},
 	strip: 'src/acute.select.template',
-	prepend: '/acute.select/templates.js',
-	fileName: 'templates.js',
+	prepend: '/acute.select/templates.html',
+	fileName: 'template.js',
 	moduleName: 'acute.select'
 });
 

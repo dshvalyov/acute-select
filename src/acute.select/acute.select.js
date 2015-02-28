@@ -25,7 +25,7 @@ angular.module("acute.select", ['acute.core.services','acute.core.directives'])
             "acFocusWhen": "="
         },
         replace: true,
-        templateUrl: defaultSettings.templatePath + "acute.select.htm",
+        templateUrl: defaultSettings.templatePath + "acute.select.html",
         link: function(scope, element, attrs) {
             scope.initialise();
         },
