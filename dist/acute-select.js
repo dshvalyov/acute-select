@@ -9,6 +9,7 @@
 // Example:- <select class="ac-select" ac-model="colour" ac-options="c.name for c in colours"></select>
 
 // Note:- ac-options works like ng-options, but does not support option groups
+
 angular.module("acute.select", [])
 .directive("acSelect", function($parse, acuteSelectService) {
     var defaultSettings = acuteSelectService.getSettings();
@@ -1047,7 +1048,7 @@ angular.module("acute.select").run(['$templateCache', function(a) { a.put('/acut
  '                    </div>\n' +
  '                    <span ng-hide="settings.comboMode">{{confirmedItem.text}}</span>\n' +
  '                </td>\n' +
- '                <td class="ac-select-image"></td>\n' +
+ '                <td class="ac-select-image"><i class="fa"></i></td>\n' +
  '            </tr>\n' +
  '            <!--Row to get the control width right, using the original select or the longest item text. Hidden at runtime.-->\n' +
  '            <tr class="ac-select-widener">\n' +
