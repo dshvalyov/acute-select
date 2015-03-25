@@ -575,7 +575,9 @@ angular.module("acute.select", [])
             function fireChangeEvent() {
                 // Fire acChange function, if specified
                 if (typeof $scope.acChange === 'function') {
-                    $scope.acChange({ value: $scope.selectedItem ? $scope.selectedItem.value : null });
+                    $timeout(function () {
+                      $scope.acChange({ value: $scope.selectedItem ? $scope.selectedItem.value : null });
+                    });
                 }
             }
 
