@@ -11,7 +11,7 @@
 // Note:- ac-options works like ng-options, but does not support option groups
 
 angular.module("acute.select", [])
-.directive("acSelect", function($parse, acuteSelectService) {
+.directive("acSelect", ['$parse', 'acuteSelectService', function($parse, acuteSelectService) {
     var defaultSettings = acuteSelectService.getSettings();
     return {
         restrict: "EAC",
@@ -26,13 +26,13 @@ angular.module("acute.select", [])
         },
         replace: true,
         templateUrl: defaultSettings.templatePath + "template.html",
-        link: function(scope, element, attrs) {
+        link: function(scope) {
             scope.initialise();
         },
         // **************************************************************
         //                          CONTROLLER
         // **************************************************************
-        controller: function($scope, $element, $window, $rootScope, $timeout, $filter, navKey, safeApply) {
+        controller: ['$scope', '$element', '$window', '$rootScope', '$timeout', '$filter', 'navKey', 'safeApply', function($scope, $element, $window, $rootScope, $timeout, $filter, navKey, safeApply) {
 
             $scope.initialise = function() {
                 $scope.settings = acuteSelectService.getSettings();
@@ -50,7 +50,7 @@ angular.module("acute.select", [])
                 $scope.matchFound = false;
 
                 // Check that ac-options and ac-model values are set
-                if (!$scope.acOptions || $scope.model === undefined) {
+                if (!$scope.acOptions) {
                     throw "ac-model and ac-options attributes must be set";
                 }
 
@@ -73,7 +73,7 @@ angular.module("acute.select", [])
 
                     // See if a data load function is specified, i.e. name ends in "()"
                     if (dataName.indexOf("()") === dataName.length - 2) {
-                        dataName = dataName.substr(0, dataName.length - 2)
+                        dataName = dataName.substr(0, dataName.length - 2);
                         // Get a reference to the data function
                         var dataFunction = $scope.$parent.$eval(dataName);
                         if (typeof dataFunction === "function") {
@@ -114,7 +114,7 @@ angular.module("acute.select", [])
 
             // If the ac-refresh attribute is set, watch it. If its value gets set to true, re-initialise.
             if ($scope.acRefresh !== undefined) {
-                $scope.$watch("acRefresh", function(newValue, oldValue) {
+                $scope.$watch("acRefresh", function(newValue) {
                     if (newValue === true) {
                         $scope.initialise();
                     }
@@ -124,7 +124,7 @@ angular.module("acute.select", [])
             // Handle ac-focus-when attribute. When set to true
             // give focus to either the combo or search text box
             if ($scope.acFocusWhen !== undefined) {
-                $scope.$watch("acFocusWhen", function(newValue, oldValue) {
+                $scope.$watch("acFocusWhen", function(newValue) {
                     if (newValue === true) {
                         // Set flag to fire the ac-focus directive
                         if ($scope.settings.comboMode) {
@@ -527,7 +527,7 @@ angular.module("acute.select", [])
                     var offSet = $scope.items.length;
                     $scope.dataFunction($scope.dataCallback, $scope.searchText, offSet);
                 }
-            }
+            };
 
             // Private functions
 
@@ -535,7 +535,6 @@ angular.module("acute.select", [])
 
                 $scope.selectedItem = item;
 
-                var oldConfirmedItem = $scope.confirmedItem;
                 var close = false;
                 if ($scope.selectedItem) {
                     $scope.confirmedItem = angular.copy($scope.selectedItem);
@@ -612,14 +611,12 @@ angular.module("acute.select", [])
 
             function downArrowKey() {
                 if ($scope.items.length > 0) {
-                    var selected = false;
                     if ($scope.selectedItem) {
                         var newIndex = $scope.selectedItem.index + 1;
                         if (newIndex < $scope.items.length) {
                             var targetItem = $scope.items[newIndex];
                             $scope.selectedItem = targetItem;
                             ensureItemVisible($scope.selectedItem);
-                            selected = true;
                         }
                         else if ($scope.settings.pageSize && $scope.items.length >= $scope.settings.pageSize) {
                             $scope.requestedItemIndex = newIndex;
@@ -630,10 +627,9 @@ angular.module("acute.select", [])
                     else {
                         // Select first item
                         $scope.selectedItem = $scope.items[0];
-                        selected = true;
                     }
                 }
-            };
+            }
 
             function upArrowKey() {
                 if ($scope.items.length > 0) {
@@ -653,7 +649,7 @@ angular.module("acute.select", [])
                         }
                     }
                 }
-            };
+            }
 
             function pageUpKey() {
                 if ($scope.items.length > 0 && $scope.selectedItem) {
@@ -665,7 +661,7 @@ angular.module("acute.select", [])
                         ensureItemVisible($scope.selectedItem);
                     }
                 }
-            };
+            }
 
             function pageDownKey() {
                 var newIndex;
@@ -691,7 +687,7 @@ angular.module("acute.select", [])
                         ensureItemVisible($scope.selectedItem);
                     }
                 }
-            };
+            }
 
             function endKey() {
                 if ($scope.items.length > 0) {
@@ -757,12 +753,12 @@ angular.module("acute.select", [])
 
                 var itemCount = $scope.allItems.length;
 
-                // If search text is blank 
+                // If search text is blank
                 // OR the search text is changed with less specificity
                 // OR paging is enabled && current number of items is >= pageSize (or zero)
                 if  ($scope.dataFunction &&
-                        ($scope.searchText === "" 
-                        || ($scope.searchText.length < $scope.previousSearchText.length) 
+                        ($scope.searchText === ""
+                        || ($scope.searchText.length < $scope.previousSearchText.length)
                         || ($scope.settings.pageSize && (itemCount >= $scope.settings.pageSize || itemCount === 0)))
                     ) {
                     // Data needs to be re-loaded.
@@ -819,7 +815,7 @@ angular.module("acute.select", [])
                     $scope.matchFound = searchTextMatchesItem();
                 }
 
-                $scope.previousSearchText = $scope.searchText
+                $scope.previousSearchText = $scope.searchText;
                 $scope.setListHeight();
             }
 
@@ -874,12 +870,12 @@ angular.module("acute.select", [])
                     console.log("ac-select:- " + text);
                 }
             }
-        }
+        }]
     };
-})
+}])
 
 // Directive to set focus to an element when a specified expression is true
-.directive('acFocus', function($timeout, $parse, safeApply) {
+.directive('acFocus', ['$timeout', '$parse', 'safeApply', function($timeout, $parse, safeApply) {
     return {
         restrict: "A",
         link: function(scope, element, attributes) {
@@ -898,9 +894,9 @@ angular.module("acute.select", [])
             });
         }
     };
-})
+}])
 
-.directive('acSelectOnFocus', function() {
+.directive('acSelectOnFocus', [function() {
     return {
         restrict: 'A',
         scope: {
@@ -914,29 +910,28 @@ angular.module("acute.select", [])
             });
         }
     };
-})
+}])
 
 // Directive for a scroll container. Set the "ac-scroll-to" attribute to an expression and when its value changes,
 // the div will scroll to that position
-.directive('acScrollTo', function() {
+.directive('acScrollTo', [function() {
     return {
         restrict: "A",
         scope: false,
-        controller: function($scope, $element, $attrs) {
+        controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
             var expression = $attrs.acScrollTo;
             $scope.$watch(expression, function() {
-                var scrollTop = $scope.$eval(expression);
-                angular.element($element)[0].scrollTop = scrollTop;
+                angular.element($element)[0].scrollTop = $scope.$eval(expression);
             });
-        }
+        }]
     };
-})
+}])
 
 // Call a function when the element is scrolled
-// E.g. ac-on-scroll="listScrolled()" 
+// E.g. ac-on-scroll="listScrolled()"
 // N.B. take care not to use the result to directly update an acScrollTo expression
 // as this will result in an infinite recursion!
-.directive('acOnScroll', function() {
+.directive('acOnScroll', [function() {
     return {
         restrict: "A",
         link: function(scope, element, attrs) {
@@ -952,9 +947,9 @@ angular.module("acute.select", [])
             }
         }
     };
-})
+}])
 
-.factory('navKey', function() {
+.factory('navKey', [function() {
     return {
         'backspace': 8,
         'tab': 9,
@@ -970,10 +965,10 @@ angular.module("acute.select", [])
         'downArrow': 40,
         'del': 46
     };
-})
+}])
 
 // safeApply service, courtesy Alex Vanston and Andrew Reutter
-.factory('safeApply', [function($rootScope) {
+.factory('safeApply', [function() {
     return function($scope, fn) {
         var phase = $scope.$root.$$phase;
         if (phase == '$apply' || phase == '$digest') {
@@ -1029,7 +1024,7 @@ angular.module("acute.select", [])
         },
 
         updateSettings: function(settings) {
-            for (name in settings) {
+            for (var name in settings) {
                 updateSingleSetting(name, settings[name]);
             }
         }
