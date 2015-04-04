@@ -1,8 +1,8 @@
 {
   "name": "acute-select",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Package for developing acute-select",
-  "main": "dist/acute-select.js",
+  "main": "./dist/acute-select.js",
   "directories": {
     "test": "test"
   },
