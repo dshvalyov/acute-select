@@ -1,6 +1,6 @@
 {
   "name": "acute-select",
-  "version": "0.1.7",
+  "version": "0.1.91",
   "description": "Package for developing acute-select",
   "main": "./dist/acute-select.js",
   "directories": {
@@ -28,12 +28,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/Medycation/acute-select.git"
+    "url": "git://github.com/dshvalyov/acute-select.git"
   },
   "author": "Jason Aden",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Medycation/acute-select/issues"
+    "url": "https://github.com/dshvalyov/acute-select/issues"
   },
-  "homepage": "https://github.com/Medycation/acute-select"
+  "homepage": "https://github.com/dshvalyov/acute-select"
 }
